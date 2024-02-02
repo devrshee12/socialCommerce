@@ -25,6 +25,20 @@ const getAllComments = async(req, res) => {
 }
 
 
+const getAllProductComment = async(req, res) => {
+    try{
+        const {productId} = req.body; 
+        const comments = await Comment.find({productId}).populate("productId").populate("userId")
+
+        return res.status(200).json({valid: true, msg:"All Comment fetched", comments});
+    }   
+    catch(err){
+        console.log(err);
+        return res.status(500).json({valid: false, msg:err.message});
+    }
+}
+
+
 const viewComment = async(req, res) => {
     try{
         const {commentId }= req.params;
@@ -74,5 +88,6 @@ module.exports = {
     deleteComment,
     getAllComments,
     viewComment,
-    updateComment
+    updateComment,
+    getAllProductComment
 }

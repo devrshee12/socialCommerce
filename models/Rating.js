@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Rating = new mongoose.Schema({
     star:{
-        type:Number,
+        type:String,
         default:""
     },
     desc: {

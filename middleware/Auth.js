@@ -23,10 +23,12 @@ const checkUserExists = async(req, res, next) => {
 const authorization = (req, res, next) => {
     try{
         const token = req?.headers?.authorization;
+        console.log("token is : ", token);
         if(!token){
             throw new Error("Token not found");
         }
         const payload = verifyToken(token);
+        console.log("payload is : ", payload);
         if(!payload){
             throw new Error("Token in not valid");
         }
@@ -34,7 +36,7 @@ const authorization = (req, res, next) => {
         next();
     }
     catch(err){
-        console.log(err.message);
+        console.log("here in authhhhh : ", err.message);
         return res.status(500).json({valid: false, msg:err.message});
 
     }
