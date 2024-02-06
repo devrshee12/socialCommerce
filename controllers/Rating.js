@@ -35,7 +35,8 @@ const getAllRating = async(req, res) => {
         if (searchQuery) {
             query.$or = [
                 { 'productId.name': { $regex: new RegExp(searchQuery, 'i') } }, // Case-insensitive search on product name
-                { comment: { $regex: new RegExp(searchQuery, 'i') } }, // Case-insensitive search on comment text
+                { star: { $regex: new RegExp(searchQuery, 'i') } }, // Case-insensitive search on comment text
+                { desc: { $regex: new RegExp(searchQuery, 'i') } }, // Case-insensitive search on comment text
                 { 'userId.name': { $regex: new RegExp(searchQuery, 'i') } } // Case-insensitive search on user name
             ];
         }
