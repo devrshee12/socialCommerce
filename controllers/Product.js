@@ -10,9 +10,9 @@ const checkRole = (role) => {
 
 const createProduct = async(req, res) => {
     try{
-        const {role} = req.user;
+        const {role, userId} = req.user;
         checkRole(role)
-        const product = await Product.create(req.body)
+        const product = await Product.create({...req.body, createdBy: userId});
         return res.status(200).json({valid: true, msg:"Product has been created", product});
     }
     catch(err){

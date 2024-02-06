@@ -14,9 +14,50 @@ const addComment = async(req, res) => {
 
 const getAllComments = async(req, res) => {
     try{
-        const {userId} = req.body;
-        const comments = await Comment.find({userId}).populate("productId").populate("userId");
-        return res.status(200).json({valid: true, msg:"All Comment fetched", comments});
+        let { userId, searchQuery, sortBy, sortOrder, page, limit } = req.query;
+        userId = userId || '';
+        searchQuery = searchQuery || '';
+        sortBy = sortBy || '';
+        sortOrder = sortOrder || 'asc';
+        page = parseInt(page) || 1;
+        limit = parseInt(limit) || 10;
+
+        let query = {};
+
+        // If userId is provided, add it to the query
+        if (userId) {
+            query.userId = userId;
+        }
+
+        // If there's a search query, add it to the query
+        if (searchQuery) {
+            query.$or = [
+                { 'productId.name': { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on product name
+                { comment: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on comment text
+            ];
+        }
+
+        const totalComments = await Comment.countDocuments(query);
+
+        const totalPages = Math.ceil(totalComments / limit);
+
+        const skip = (page - 1) * limit;
+
+        let sortOptions = {};
+
+        // Sort by specified field
+        if (sortBy) {
+            sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+        }
+
+        const comments = await Comment.find(query)
+            .populate("productId")
+            .populate("userId")
+            .sort(sortOptions)
+            .skip(skip)
+            .limit(limit);
+
+        return res.status(200).json({ valid: true, msg: "All Comments fetched", comments, totalPages });
     }
     catch(err){
         console.log(err);
